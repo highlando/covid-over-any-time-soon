@@ -3,7 +3,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 plt.style.use('bmh')
 
-path = 'data/jhu-csse/csse_covid_19_data/csse_covid_19_time_series/' +\
+path = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
        'time_series_19-covid-{}.csv'
 confirmed = pd.read_csv(path.format('Confirmed'))
 deaths = pd.read_csv(path.format('Deaths'))
