@@ -1,6 +1,15 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+import matplotlib
+
+
+font = {'family': 'normal',
+        # 'weight': 'bold',
+        'size': 16}
+
+matplotlib.rc('font', **font)
+
 plt.style.use('bmh')
 
 path = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
@@ -18,7 +27,7 @@ mycountryl = ['Germany', 'Spain', 'Italy', 'France', 'China', 'US',
 ncs = len(mycountryl)
 dtwo = deaths.copy()
 dtwo.drop(columns=['Province/State', 'Lat', 'Long'], inplace=True)
-cfig = plt.figure(100, figsize=(16, 12), dpi=75)
+cfig = plt.figure(100, figsize=(16, 12), dpi=100)
 for idx, mycountry in enumerate(mycountryl):
     ax = cfig.add_subplot(3, 3, idx+1)
     mcdtwo = dtwo[dtwo['Country/Region'] == mycountry]
@@ -78,7 +87,7 @@ def getthelogslope(npa):
 
 # ## The plots of the example scenarios
 N = 80
-expgrwth = np.array([1.2**x for x in range(N)])
+expgrwth = np.array([1.1**x for x in range(N)])
 expgrwthl = []
 for x in range(N):
     expgrwthl.append(expgrwth[:x].sum())
@@ -91,7 +100,7 @@ for x in range(N):
     exdgrwth.append(1000+100*expdecay[:x].sum())
 exdgrwth = np.array(exdgrwth)
 edslp, _, _ = getthelogslope(exdgrwth)
-plt.figure(2, figsize=(8, 4), dpi=75)
+plt.figure(2, figsize=(8, 4), dpi=100)
 plt.plot(xpgslp, 'o', label='exp growth')
 plt.plot(lngslp, 'o', label='constant growth')
 plt.plot(edslp, 'o', label='decaying growth')
@@ -99,4 +108,23 @@ plt.title('Example Scenarios')
 plt.legend()
 plt.savefig('slopes-examples.png')
 plt.savefig('slopes-examples.pdf')
+# plt.show()
+
+cfig = plt.figure(3, figsize=(8, 4), dpi=100)
+ax = cfig.add_subplot(1, 1, 1)
+covidsimdata = pd.read_csv('CovidSIM-results-1.csv')
+covidsimdatanoi = pd.read_csv('CovidSIM-results-2.csv')
+deaths = covidsimdata[' Deaths'].values
+deathsnoi = covidsimdatanoi[' Deaths'].values
+covisim, _, _ = getthelogslope(deaths)
+covisimnoi, _, _ = getthelogslope(deathsnoi)
+ax.plot(covisimnoi, 'o', label='Scenario without intervention')
+ax.plot(covisim, 'o', label='Scenario with max ICU < 45,000')
+
+ax.set_ylim(ymin=-.05, ymax=1.)
+ax.legend()
+ax.set_title('Simulated Scenarios for Germany')
+plt.savefig('slopes-simulation.png')
+plt.savefig('slopes-simulation.pdf')
+
 plt.show()
