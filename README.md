@@ -15,7 +15,7 @@ to have the data cloned together with the repo and then run
 python3 deathgrowthrates.py
 ```
 
-to produced the plots.
+to produce the plots.
 
 ![Current values as of March 22nd](slopes-dsifc.png)
 ![Example Scenarios](slopes-examples.png)

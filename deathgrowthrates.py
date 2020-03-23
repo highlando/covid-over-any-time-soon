@@ -57,7 +57,7 @@ for idx, mycountry in enumerate(mycountryl):
     ax.plot(slopes[-50:], 'o', label='daily value')
     ax.plot(avgslopes[-50:], 'o', label='two days average')
     ax.plot(nfdl[-50:], label='five days average')
-    ax.set_xlim(xmin=-2.5, xmax=52.5)
+    ax.set_xlim(xmin=-2.45, xmax=52.45)
     if not (mycountry == 'China'):  # or mycountry == 'Korea, South'):
         ax.set_ylim(ymin=-.05, ymax=1.)
     if idx == 6 or idx == 7:
@@ -124,6 +124,7 @@ ax.set_title('Example Scenarios')
 ax.set_ylabel('slopes in casualties')
 ax.set_xlabel('days of simulation')
 ax.yaxis.set_label_position("right")
+plt.tight_layout()
 plt.legend(facecolor='white')
 plt.savefig('slopes-examples.png')
 plt.savefig('slopes-examples.pdf')
