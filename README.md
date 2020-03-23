@@ -19,4 +19,4 @@ to produced the plots.
 
 ![Current values as of March 22nd](slopes-dsifc.png)
 ![Example Scenarios](slopes-examples.png)
-![Simulated Scenarios](slopes-simulation.png)
+![Simulated Scenarios](slopes-icus-simulation.png)
