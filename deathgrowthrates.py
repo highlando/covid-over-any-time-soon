@@ -40,6 +40,7 @@ ncs = len(mycountryl)
 dtwo = deaths.copy()
 dtwo.drop(columns=['Lat', 'Long'], inplace=True)
 cfig = plt.figure(100, figsize=(16, 12), dpi=100)
+alphas = [.05*x for x in range(10)]
 for idx, mycountry in enumerate(mycountryl):
     ax = cfig.add_subplot(3, 3, idx+1)
     mcdtwo = dtwo[dtwo['Country/Region'] == mycountry]
@@ -71,14 +72,32 @@ for idx, mycountry in enumerate(mycountryl):
     ax.plot(slopes[-50:], 'o', label='daily value')
     ax.plot(avgslopes[-50:], 'o', label='two days average')
     ax.plot(nfdl[-50:], label='five days average')
+
     ax.set_xlim(xmin=-2.45, xmax=52.45)
-    if not (mycountry == 'China'):  # or mycountry == 'Korea, South'):
-        ax.set_ylim(ymin=-.05, ymax=1.)
+    if mycountry == 'China':  # or mycountry == 'Korea, South'):
+        ymax = .3
+    else:
+        ymax = 1.
+    ax.set_ylim(ymin=-.05, ymax=ymax)
+
+    from ghc_helpers import getxranges
+    xranges = getxranges(gda[-50:], init=100, factor=3)
+    xranges.append(51)
+    lstxmin = 0
+    for kk, xrng in enumerate(xranges):
+        if xrng == 50:
+            xmax = 1
+        else:
+            xmax = .975*(xrng-1)/50
+        plt.axhspan(-.05, ymax, xmin=lstxmin, xmax=xmax, alpha=alphas[kk])
+        lstxmin = xmax
+
     if idx == 6 or idx == 7:
         ax.set_xlabel('the last 50 days')
     if idx == 2 or idx == 5:
         ax.set_ylabel('slopes in casualties')
         ax.yaxis.set_label_position("right")
+
     ax.set_title(mycountry)
 ax = cfig.add_subplot(3, 3, idx+2)
 ax.plot([1, 50], [1, 0], 'o', label='daily value')
@@ -90,10 +109,18 @@ ax.legend(loc='center', facecolor='white')
 ax.set_xlabel('the last 50 days')
 ax.set_ylabel('slopes in casualties')
 ax.yaxis.set_label_position("right")
+plt.axhspan(-.05, 1.05, xmin=0.4, xmax=.6, alpha=.05)
+plt.axhspan(-.05, 1.05, xmin=0.6, xmax=.75, alpha=.1)
+plt.axhspan(-.05, 1.05, xmin=0.75, xmax=.975, alpha=.15)
+ax.text(1, 0.1, '< 100 cases')
+ax.text(20, 0.1, '< 300')
+ax.text(31, 0.1, '< 900')
+ax.text(39, 0.1, '< 2700')
 ax.set_title('Legend')
 plt.tight_layout()
 plt.savefig('slopes-dsifc.png')
 # plt.savefig('slopes-dsifc.pdf')
+plt.show()
 
 # # all countries as pdf
 mycountryl.extend(somecntrl)
@@ -134,7 +161,8 @@ for idx, mycountry in enumerate(mycountryl):
         ax.set_ylim(ymin=-.05, ymax=1.)
     if idx == 18 or idx == 19:
         ax.set_xlabel('the last 50 days')
-    if idx == 2 or idx == 5 or idx == 8 or idx == 11 or idx == 14 or idx == 17:
+    if (idx == 2 or idx == 5 or idx == 8 or
+            idx == 11 or idx == 14 or idx == 17):
         ax.set_ylabel('slopes in casualties')
         ax.yaxis.set_label_position("right")
     ax.set_title(mycountry)
