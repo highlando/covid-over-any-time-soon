@@ -120,7 +120,7 @@ ax.set_title('Legend')
 plt.tight_layout()
 plt.savefig('slopes-dsifc.png')
 # plt.savefig('slopes-dsifc.pdf')
-plt.show()
+# plt.show()
 
 # # all countries as pdf
 mycountryl.extend(somecntrl)
