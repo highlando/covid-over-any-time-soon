@@ -23,7 +23,7 @@ somecntrl = ['Argentina', 'Australia', 'Austria',
              'Netherlands', 'Russia', 'Sweden',
              'Switzerland', 'United Kingdom']
 
-tworands = np.random.randint(0, 10, (2, ))
+tworands = np.random.randint(0, 14, (2, ))
 guestone = somecntrl[tworands[0]]
 guesttwo = somecntrl[tworands[1]]
 
