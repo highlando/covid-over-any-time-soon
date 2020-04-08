@@ -18,20 +18,21 @@ path = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
 deaths = pd.read_csv(path)
 
 somecntrl = ['Argentina', 'Australia', 'Austria',
-             'Brazil', 'Croatia', 'Denmark',
-             'Egypt', 'India', 'Korea, South',
-             'Netherlands', 'Russia', 'Sweden',
-             'Switzerland', 'United Kingdom']
+             'Brazil', 'China', 'Croatia',
+             'Denmark', 'Egypt', 'India',
+             'Korea, South', 'Netherlands', 'Russia',
+             'Sweden', 'Switzerland', 'United Kingdom']
 
-tworands = np.random.randint(0, 14, (2, ))
+tworands = np.random.randint(0, 14, (3, ))
 guestone = somecntrl[tworands[0]]
 guesttwo = somecntrl[tworands[1]]
+guestthree = somecntrl[tworands[2]]
 
-mycountryl = ['Germany', 'Spain', 'Italy', 'France', 'China', 'US']
+mycountryl = ['Germany', 'Spain', 'Italy', 'France', 'US']
 
 somecntrl.extend(mycountryl)
 somecntrl.sort()
-mycountryl.extend([guestone, guesttwo])
+mycountryl.extend([guestone, guesttwo, guestthree])
 
 dtwo = deaths.copy()
 dtwo.drop(columns=['Lat', 'Long'], inplace=True)
@@ -83,7 +84,7 @@ icusnoi = covidsimdatanoi[' ICU'].values
 
 ax.plot(covisimnoi, 'o', label='Scenario without intervention')
 ax.plot(covisim, 'o', label='Scenario with max ICU < 45,000')
-ax.set_ylim(ymin=-.05, ymax=1.)
+ax.set_ylim(ymin=-.05, ymax=.5)
 ax.legend(facecolor='white')
 ax.set_title('Simulated Slopes for Germany')
 ax.set_ylabel('slopes in casualties')

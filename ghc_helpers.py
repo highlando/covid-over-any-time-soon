@@ -58,9 +58,9 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100, figfile=None):
 
         ax.set_xlim(xmin=-2.45, xmax=52.45)
         if mycountry == 'China':  # or mycountry == 'Korea, South'):
-            ymax, ymin = .3, -.05*.3
+            ymax, ymin = .525, -.025
         else:
-            ymax, ymin = 1.05, -.05
+            ymax, ymin = .525, -.025
         ax.set_ylim(ymin=ymin, ymax=ymax)
 
         xranges = getxranges(gda[-50:], init=100, factor=3)
@@ -84,21 +84,21 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100, figfile=None):
                 bbox={'facecolor': 'white', 'alpha': .5})
         ax.set_title(mycountry)
     ax = cfig.add_subplot(nrows, ncols, idx+2)
-    ax.plot([1, 50], [1, 0], 'o', label='daily value')
-    ax.plot([1, 50], [.9, .1], 'o', label='two days average')
-    ax.plot([1, 50], [.95, .05], label='five days average')
+    ax.plot([1, 50], [.5, 0], 'o', label='daily value')
+    ax.plot([1, 50], [.45, .05], 'o', label='two days average')
+    ax.plot([1, 50], [.475, .025], label='five days average')
     ax.plot(np.NaN, '.', label=today)
-    ymax, ymin = 1.05, -.05
+    ymax, ymin = .525, -.025
     ax.set_ylim(ymin=ymin, ymax=ymax)
     # ax.axis('off')
     ax.legend(loc='center', facecolor='white')
     ax.set_xlabel('the last 50 days')
     ax.set_ylabel('slopes in casualties')
     ax.yaxis.set_label_position("right")
-    plt.axhspan(-.05, 1.05, xmin=0.275, xmax=.45, alpha=.05)
-    plt.axhspan(-.05, 1.05, xmin=0.45, xmax=.615, alpha=.1)
-    plt.axhspan(-.05, 1.05, xmin=0.615, xmax=.8, alpha=.15)
-    plt.axhspan(-.05, 1.05, xmin=0.8, xmax=1., alpha=.2)
+    plt.axhspan(-.025, .525, xmin=0.275, xmax=.45, alpha=.05)
+    plt.axhspan(-.025, .525, xmin=0.45, xmax=.615, alpha=.1)
+    plt.axhspan(-.025, .525, xmin=0.615, xmax=.8, alpha=.15)
+    plt.axhspan(-.025, .525, xmin=0.8, xmax=1., alpha=.2)
     bbstl = {'facecolor': 'white', 'alpha': .5}
     ax.text(.7, .8, 'casualties', transform=ax.transAxes,
             bbox=bbstl)
