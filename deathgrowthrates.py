@@ -2,12 +2,13 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
-from ghc_helpers import plotlogslops, getthelogslope
+from ghc_helpers import plotlogslops, getthelogslope, lmonthslops
 
 
 font = {'family': 'normal',
         # 'weight': 'bold',
         'size': 16}
+ndays = 80
 
 matplotlib.rc('font', **font)
 
@@ -19,25 +20,32 @@ deaths = pd.read_csv(path)
 
 somecntrl = ['Argentina', 'Australia', 'Austria',
              'Brazil', 'China', 'Croatia',
-             'Denmark', 'Egypt', 'India',
-             'Korea, South', 'Netherlands', 'Russia',
-             'Sweden', 'Switzerland', 'United Kingdom']
+             'Denmark', 'Egypt', 'Greece',
+             'India', 'Netherlands', 'Russia',
+             'Switzerland', 'United Kingdom']
 
-tworands = np.random.randint(0, 14, (3, ))
+tworands = np.random.randint(0, 14, (2, ))
 guestone = somecntrl[tworands[0]]
 guesttwo = somecntrl[tworands[1]]
-guestthree = somecntrl[tworands[2]]
+# guestthree = somecntrl[tworands[2]]
 
-mycountryl = ['Germany', 'Spain', 'Italy', 'France', 'US']
+mycountryl = ['Germany', 'Spain', 'Italy', 'France', 'Sweden', 'US']
 
 somecntrl.extend(mycountryl)
 somecntrl.sort()
-mycountryl.extend([guestone, guesttwo, guestthree])
+# mycountryl.extend([guestone, guesttwo, guestthree])
+mycountryl.extend([guestone, guesttwo])
 
 dtwo = deaths.copy()
 dtwo.drop(columns=['Lat', 'Long'], inplace=True)
-cfig = plotlogslops(dtwo, mycountryl, figfile='slopes-dsifc.png')
-ccfig = plotlogslops(dtwo, somecntrl, fignum=200, figfile='slopes-dsifc.pdf')
+cfig = plotlogslops(dtwo, mycountryl, figfile='slopes-dsifc.png', ndays=ndays)
+ccfig = plotlogslops(dtwo, somecntrl, fignum=200,
+                     figfile='slopes-dsifc.pdf', ndays=ndays)
+
+cfig = lmonthslops(dtwo, mycountryl, fignum=220,
+                   figfile='lmspls-dsifc.png', ndays=50)
+ccfig = lmonthslops(dtwo, somecntrl, fignum=230,
+                    figfile='lmspls-dsifc.pdf', ndays=50)
 # plt.show()
 
 # ## The plots of the example scenarios

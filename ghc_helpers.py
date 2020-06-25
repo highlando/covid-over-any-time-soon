@@ -36,7 +36,8 @@ def getxranges(datarray, init=100, factor=3):
     return idxl
 
 
-def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100, figfile=None):
+def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
+                 ndays=50, figfile=None):
     ncnt = len(countryl)
     nrows = np.int(np.ceil(ncnt/ncols))
     cfig = plt.figure(fignum, figsize=(5*ncols, 4*nrows), dpi=dpi)
@@ -52,30 +53,30 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100, figfile=None):
             gda = gda + np.array(gdll[2:])
 
         slopes, tdavrg, fdavrg = getthelogslope(gda)
-        ax.plot(slopes[-50:], 'o', label='daily value')
-        ax.plot(tdavrg[-50:], 'o', label='two days average')
-        ax.plot(fdavrg[-50:], label='five days average')
+        ax.plot(slopes[-ndays:], 'o', label='daily value')
+        ax.plot(tdavrg[-ndays:], 'o', label='two days average')
+        ax.plot(fdavrg[-ndays:], label='five days average')
 
-        ax.set_xlim(xmin=-2.45, xmax=52.45)
+        ax.set_xlim(xmin=-2.45, xmax=ndays+2.45)
         if mycountry == 'China':  # or mycountry == 'Korea, South'):
             ymax, ymin = .525, -.025
         else:
             ymax, ymin = .525, -.025
         ax.set_ylim(ymin=ymin, ymax=ymax)
 
-        xranges = getxranges(gda[-50:], init=100, factor=3)
-        xranges.append(51)
+        xranges = getxranges(gda[-ndays:], init=100, factor=3)
+        xranges.append(ndays+1)
         lstxmin = 0
         for kk, xrng in enumerate(xranges):
-            if xrng == 51:
+            if xrng == ndays+1:
                 xmax = 1
             else:
-                xmax = .975*(xrng-1)/50
+                xmax = .975*(xrng-1)/ndays
             plt.axhspan(-.05, ymax, xmin=lstxmin, xmax=xmax, alpha=alphas[kk])
             lstxmin = xmax
 
         if idx >= (nrows-1)*ncols:
-            ax.set_xlabel('the last 50 days')
+            ax.set_xlabel('the last {0} days'.format(ndays))
         if np.mod(idx+1, ncols) == 0:
             ax.set_ylabel('slopes in casualties')
             ax.yaxis.set_label_position("right")
@@ -84,15 +85,15 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100, figfile=None):
                 bbox={'facecolor': 'white', 'alpha': .5})
         ax.set_title(mycountry)
     ax = cfig.add_subplot(nrows, ncols, idx+2)
-    ax.plot([1, 50], [.5, 0], 'o', label='daily value')
-    ax.plot([1, 50], [.45, .05], 'o', label='two days average')
-    ax.plot([1, 50], [.475, .025], label='five days average')
+    ax.plot([1, ndays], [.5, 0], 'o', label='daily value')
+    ax.plot([1, ndays], [.45, .05], 'o', label='two days average')
+    ax.plot([1, ndays], [.475, .025], label='five days average')
     ax.plot(np.NaN, '.', label=today)
     ymax, ymin = .525, -.025
     ax.set_ylim(ymin=ymin, ymax=ymax)
     # ax.axis('off')
     ax.legend(loc='center', facecolor='white')
-    ax.set_xlabel('the last 50 days')
+    ax.set_xlabel('the last {0} days'.format(ndays))
     ax.set_ylabel('slopes in casualties')
     ax.yaxis.set_label_position("right")
     plt.axhspan(-.025, .525, xmin=0.275, xmax=.45, alpha=.05)
@@ -103,10 +104,72 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100, figfile=None):
     ax.text(.7, .8, 'casualties', transform=ax.transAxes,
             bbox=bbstl)
     ax.text(1, 0.02, '<100 \n    cases', bbox=bbstl)
-    ax.text(15, 0.07, '>100', bbox=bbstl)
-    ax.text(24, 0.07, '>300', bbox=bbstl)
-    ax.text(33, 0.07, '>900', bbox=bbstl)
-    ax.text(43, 0.07, '>2700', bbox=bbstl)
+    ax.text(14/50*ndays, 0.07, '>100', bbox=bbstl)
+    ax.text(24/50*ndays, 0.07, '>300', bbox=bbstl)
+    ax.text(33/50*ndays, 0.07, '>900', bbox=bbstl)
+    ax.text(43/50*ndays, 0.07, '>2700', bbox=bbstl)
+    ax.set_title('Legend')
+    plt.tight_layout()
+    if figfile is not None:
+        plt.savefig(figfile)
+    return cfig
+
+
+def lmonthslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
+                ndays=40, plotdays=30, figfile=None):
+    ncnt = len(countryl)
+    nrows = np.int(np.ceil(ncnt/ncols))
+    cfig = plt.figure(fignum, figsize=(5*ncols, 4*nrows), dpi=dpi)
+    for idx, mycountry in enumerate(countryl):
+        ax = cfig.add_subplot(nrows, ncols, idx+1)
+        mcdtwo = pddf[pddf['Country/Region'] == mycountry]
+        # sick of pandas? -- convert the data frame to a numpy array
+        gdl = mcdtwo.values.tolist()
+        # only the numerical values
+        gda = np.array(gdl[0][2:])
+        for gdll in gdl[1:]:  # sum up if there are more regions per country
+            gda = gda + np.array(gdll[2:])
+
+        ggda = gda[-ndays:] - gda[-ndays-1]
+        slopes, tdavrg, fdavrg = getthelogslope(ggda)
+        ax.plot(slopes[-plotdays:], 'o', label='daily value')
+        ax.plot(tdavrg[-plotdays:], 'o', label='two days average')
+        ax.plot(fdavrg[-plotdays:], label='five days average')
+
+        ax.set_xlim(xmin=-2.45, xmax=plotdays+2.45)
+        ymax, ymin = .125, -.025
+        ax.set_ylim(ymin=ymin, ymax=ymax)
+        ax.set_yticks([0.0, 0.05, 0.1])
+
+        if idx >= (nrows-1)*ncols:
+            ax.set_xlabel('the last {0} days'.format(plotdays))
+        if np.mod(idx+1, ncols) == 0:
+            ax.set_ylabel('slopes in casualties')
+            ax.yaxis.set_label_position("right")
+
+        ax.text(.8, .8, '{0}'.format(gda[-1]-gda[-plotdays-1]),
+                transform=ax.transAxes,
+                bbox={'facecolor': 'white', 'alpha': .5})
+        ax.set_title(mycountry)
+    ax = cfig.add_subplot(nrows, ncols, idx+2)
+    ax.plot([1, plotdays], [.5, 0], 'o', label='daily value')
+    ax.plot([1, plotdays], [.45, .05], 'o', label='two days average')
+    ax.plot([1, plotdays], [.475, .025], label='five days average')
+    ax.plot(np.NaN, '.', label=today)
+    ymax, ymin = .525, -.025
+    ax.set_ylim(ymin=ymin, ymax=ymax)
+    # ax.axis('off')
+    ax.legend(loc='center', facecolor='white')
+    ax.set_xlabel('the last {0} days'.format(plotdays))
+    ax.set_ylabel('slopes in casualties')
+    ax.yaxis.set_label_position("right")
+    plt.axhspan(-.025, .525, xmin=0.275, xmax=.45, alpha=.05)
+    plt.axhspan(-.025, .525, xmin=0.45, xmax=.615, alpha=.1)
+    plt.axhspan(-.025, .525, xmin=0.615, xmax=.8, alpha=.15)
+    plt.axhspan(-.025, .525, xmin=0.8, xmax=1., alpha=.2)
+    bbstl = {'facecolor': 'white', 'alpha': .5}
+    ax.text(.7, .8, 'casualties', transform=ax.transAxes,
+            bbox=bbstl)
     ax.set_title('Legend')
     plt.tight_layout()
     if figfile is not None:
