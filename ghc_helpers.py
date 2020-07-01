@@ -27,6 +27,22 @@ def getthelogslope(npa):
     return slopes, avgslopes, fivedaysavrg
 
 
+def getthepercincreases(npa):
+    # set the infs to zero
+    # the slope is the difference
+    slopes = (npa[1:] - npa[:-1])/npa[:-1]*100
+    # use an average
+    avgslopes = .5*(slopes[1:] + slopes[:-1])
+    fivedaysavrg = .2*(slopes[:-4] + slopes[1:-3] + slopes[2:-2]
+                       + slopes[3:-1] + slopes[4:])
+    fdl = fivedaysavrg.tolist()
+    # extend with NaN to align with the data in the plots
+    nfdl = [np.NaN, np.NaN]
+    nfdl.extend(fdl)
+    nfdl.extend([np.NaN, np.NaN])
+    return slopes, avgslopes, fivedaysavrg
+
+
 def getxranges(datarray, init=100, factor=3):
     idxl = []
     cmrgn = init
@@ -101,7 +117,7 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
     plt.axhspan(-.025, .525, xmin=0.615, xmax=.8, alpha=.15)
     plt.axhspan(-.025, .525, xmin=0.8, xmax=1., alpha=.2)
     bbstl = {'facecolor': 'white', 'alpha': .5}
-    ax.text(.7, .8, 'casualties', transform=ax.transAxes,
+    ax.text(.6, .8, 'total casualties', transform=ax.transAxes,
             bbox=bbstl)
     ax.text(1, 0.02, '<100 \n    cases', bbox=bbstl)
     ax.text(14/50*ndays, 0.07, '>100', bbox=bbstl)
@@ -131,20 +147,20 @@ def lmonthslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
             gda = gda + np.array(gdll[2:])
 
         ggda = gda[-ndays:] - gda[-ndays-1]
-        slopes, tdavrg, fdavrg = getthelogslope(ggda)
+        slopes, tdavrg, fdavrg = getthepercincreases(ggda)
         ax.plot(slopes[-plotdays:], 'o', label='daily value')
         ax.plot(tdavrg[-plotdays:], 'o', label='two days average')
         ax.plot(fdavrg[-plotdays:], label='five days average')
 
         ax.set_xlim(xmin=-2.45, xmax=plotdays+2.45)
-        ymax, ymin = .125, -.025
+        ymax, ymin = 9, -1
         ax.set_ylim(ymin=ymin, ymax=ymax)
-        ax.set_yticks([0.0, 0.05, 0.1])
+        ax.set_yticks([0, 4, 8])
 
         if idx >= (nrows-1)*ncols:
             ax.set_xlabel('the last {0} days'.format(plotdays))
         if np.mod(idx+1, ncols) == 0:
-            ax.set_ylabel('slopes in casualties')
+            ax.set_ylabel('daily plus [%]')
             ax.yaxis.set_label_position("right")
 
         ax.text(.8, .8, '{0}'.format(gda[-1]-gda[-plotdays-1]),
@@ -161,14 +177,10 @@ def lmonthslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
     # ax.axis('off')
     ax.legend(loc='center', facecolor='white')
     ax.set_xlabel('the last {0} days'.format(plotdays))
-    ax.set_ylabel('slopes in casualties')
+    ax.set_ylabel('daily plus [%]')
     ax.yaxis.set_label_position("right")
-    plt.axhspan(-.025, .525, xmin=0.275, xmax=.45, alpha=.05)
-    plt.axhspan(-.025, .525, xmin=0.45, xmax=.615, alpha=.1)
-    plt.axhspan(-.025, .525, xmin=0.615, xmax=.8, alpha=.15)
-    plt.axhspan(-.025, .525, xmin=0.8, xmax=1., alpha=.2)
     bbstl = {'facecolor': 'white', 'alpha': .5}
-    ax.text(.7, .8, 'casualties', transform=ax.transAxes,
+    ax.text(.375, .8, 'last month casualties', transform=ax.transAxes,
             bbox=bbstl)
     ax.set_title('Legend')
     plt.tight_layout()

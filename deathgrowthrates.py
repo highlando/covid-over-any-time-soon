@@ -43,9 +43,9 @@ ccfig = plotlogslops(dtwo, somecntrl, fignum=200,
                      figfile='slopes-dsifc.pdf', ndays=ndays)
 
 cfig = lmonthslops(dtwo, mycountryl, fignum=220,
-                   figfile='lmspls-dsifc.png', ndays=50)
+                   figfile='lmslps-dsifc.png', ndays=50)
 ccfig = lmonthslops(dtwo, somecntrl, fignum=230,
-                    figfile='lmspls-dsifc.pdf', ndays=50)
+                    figfile='lmslps-dsifc.pdf', ndays=50)
 # plt.show()
 
 # ## The plots of the example scenarios
