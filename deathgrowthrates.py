@@ -14,9 +14,11 @@ matplotlib.rc('font', **font)
 
 plt.style.use('bmh')
 
-path = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
-       'time_series_covid19_deaths_global.csv'
-deaths = pd.read_csv(path)
+pathd = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
+        'time_series_covid19_deaths_global.csv'
+pathc = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
+        'time_series_covid19_confirmed_global.csv'
+deaths = pd.read_csv(pathd)
 
 somecntrl = ['Argentina', 'Australia', 'Austria',
              'Brazil', 'China', 'Croatia',
