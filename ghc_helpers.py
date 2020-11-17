@@ -17,14 +17,15 @@ def getthelogslope(npa):
     slopes = lggda[1:] - lggda[:-1]
     # use an average
     avgslopes = .5*(slopes[1:] + slopes[:-1])
-    fivedaysavrg = .2*(slopes[:-4] + slopes[1:-3] + slopes[2:-2]
-                       + slopes[3:-1] + slopes[4:])
-    fdl = fivedaysavrg.tolist()
+    svndaysavrg = 1/7*(slopes[:-6] + slopes[1:-5] + slopes[2:-4]
+                       + slopes[3:-3] + slopes[4:-2] + slopes[5:-1]
+                       + slopes[6:])
+    # fdl = svndaysavrg.tolist()
     # extend with NaN to align with the data in the plots
-    nfdl = [np.NaN, np.NaN]
-    nfdl.extend(fdl)
-    nfdl.extend([np.NaN, np.NaN])
-    return slopes, avgslopes, fivedaysavrg
+    # nfdl = [np.NaN, np.NaN]
+    # nfdl.extend(fdl)
+    # nfdl.extend([np.NaN, np.NaN])
+    return slopes, avgslopes, svndaysavrg
 
 
 def getthepercincreases(npa):
@@ -33,17 +34,19 @@ def getthepercincreases(npa):
     slopes = (npa[1:] - npa[:-1])/npa[:-1]*100
     # use an average
     avgslopes = .5*(slopes[1:] + slopes[:-1])
-    fivedaysavrg = .2*(slopes[:-4] + slopes[1:-3] + slopes[2:-2]
-                       + slopes[3:-1] + slopes[4:])
-    fdl = fivedaysavrg.tolist()
+    # fivedaysavrg = .2*(slopes[:-4] + slopes[1:-3] + slopes[2:-2]
+    #                    + slopes[3:-1] + slopes[4:])
+    svndaysavrg = 1/7*(slopes[:-6] + slopes[1:-5] + slopes[2:-4]
+                       + slopes[3:-3] + slopes[4:-2] + slopes[5:-1]
+                       + slopes[6:])
+    fdl = svndaysavrg.tolist()
     # extend with NaN to align with the data in the plots
-    nfdl = [np.NaN, np.NaN]
+    nfdl = [np.NaN]*6
     nfdl.extend(fdl)
-    nfdl.extend([np.NaN, np.NaN])
-    return slopes, avgslopes, fivedaysavrg
+    return slopes, avgslopes, np.array(nfdl)
 
 
-def getxranges(datarray, init=100, factor=3):
+def getxranges(datarray, init=1000, factor=3):
     idxl = []
     cmrgn = init
     while datarray[-1] > cmrgn:
@@ -73,14 +76,14 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
         slopes, tdavrg, fdavrg = getthepercincreases(ggda)
         ax.plot(slopes[-plotdays:], 'o', label='daily value')
         ax.plot(tdavrg[-plotdays:], 'o', label='two days average')
-        ax.plot(fdavrg[-plotdays:], label='five days average')
+        ax.plot(fdavrg[-plotdays:], label='seven days average')
 
         ax.set_xlim(xmin=-2.45, xmax=plotdays+2.45)
         # ymax, ymin = .315, -.015
-        ymax, ymin = 9, -1
+        ymax, ymin = 11, -1
         ax.set_ylim(ymin=ymin, ymax=ymax)
 
-        xranges = getxranges(ggda[-ndays:], init=100, factor=3)
+        xranges = getxranges(ggda[-ndays:], init=1000, factor=3)
         xranges.append(ndays+1)
         lstxmin = 0
         for kk, xrng in enumerate(xranges):
@@ -106,7 +109,7 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
     ax = cfig.add_subplot(nrows, ncols, idx+2)
     ax.plot([1, ndays], [8, 0], 'o', label='daily value')
     ax.plot([1, ndays], [6, 2], 'o', label='two days average')
-    ax.plot([1, ndays], [7, 3], label='five days average')
+    ax.plot([1, ndays], [7, 1], label='seven days average')
     ax.plot(np.NaN, '.', label=today)
     # ymax, ymin = .525, -.025
     ymax, ymin = 9, -1
@@ -120,18 +123,18 @@ def plotlogslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
     # plt.axhspan(-.025, .525, xmin=0.45, xmax=.615, alpha=.1)
     # plt.axhspan(-.025, .525, xmin=0.615, xmax=.8, alpha=.15)
     # plt.axhspan(-.025, .525, xmin=0.8, xmax=1., alpha=.2)
-    plt.axhspan(-1, 9, xmin=0.275, xmax=.45, alpha=.05)
-    plt.axhspan(-1, 9, xmin=0.45, xmax=.615, alpha=.1)
-    plt.axhspan(-1, 9, xmin=0.615, xmax=.8, alpha=.15)
-    plt.axhspan(-1, 9, xmin=0.8, xmax=1., alpha=.2)
+    plt.axhspan(-1, 11, xmin=0.275, xmax=.45, alpha=.05)
+    plt.axhspan(-1, 11, xmin=0.45, xmax=.615, alpha=.1)
+    plt.axhspan(-1, 11, xmin=0.615, xmax=.8, alpha=.15)
+    plt.axhspan(-1, 11, xmin=0.8, xmax=1., alpha=.2)
     bbstl = {'facecolor': 'white', 'alpha': .5}
-    ax.text(.6, .8, 'total casualties', transform=ax.transAxes,
+    ax.text(.6, .8, 'total cases', transform=ax.transAxes,
             bbox=bbstl)
-    ax.text(1, 0.02, '<100 \n    cases', bbox=bbstl)
-    ax.text(14/50*ndays, 0.07, '>100', bbox=bbstl)
-    ax.text(24/50*ndays, 0.07, '>300', bbox=bbstl)
-    ax.text(33/50*ndays, 0.07, '>900', bbox=bbstl)
-    ax.text(43/50*ndays, 0.07, '>2700', bbox=bbstl)
+    ax.text(1, 0.02, '<1000 \n    cases', bbox=bbstl)
+    ax.text(14/50*ndays, 0.07, '>1000', bbox=bbstl)
+    ax.text(24/50*ndays, 0.07, '>3000', bbox=bbstl)
+    ax.text(33/50*ndays, 0.07, '>9000', bbox=bbstl)
+    ax.text(43/50*ndays, 0.07, '>27000', bbox=bbstl)
     ax.set_title('Legend')
     plt.tight_layout()
     if figfile is not None:
@@ -158,12 +161,12 @@ def lmonthslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
         slopes, tdavrg, fdavrg = getthepercincreases(ggda)
         ax.plot(slopes[-plotdays:], 'o', label='daily value')
         ax.plot(tdavrg[-plotdays:], 'o', label='two days average')
-        ax.plot(fdavrg[-plotdays:], label='five days average')
+        ax.plot(fdavrg[-plotdays:], label='seven days average')
 
         ax.set_xlim(xmin=-2.45, xmax=plotdays+2.45)
-        ymax, ymin = 9, -1
+        ymax, ymin = 11, -1
         ax.set_ylim(ymin=ymin, ymax=ymax)
-        ax.set_yticks([0, 4, 8])
+        ax.set_yticks([0, 5, 10])
 
         if idx >= (nrows-1)*ncols:
             ax.set_xlabel('the last {0} days'.format(plotdays))
@@ -176,9 +179,12 @@ def lmonthslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
                 bbox={'facecolor': 'white', 'alpha': .5})
         ax.set_title(mycountry)
     ax = cfig.add_subplot(nrows, ncols, idx+2)
-    ax.plot([1, plotdays], [.5, 0], 'o', label='daily value')
-    ax.plot([1, plotdays], [.45, .05], 'o', label='two days average')
-    ax.plot([1, plotdays], [.475, .025], label='five days average')
+    # ax.plot([1, plotdays], [.5, 0], 'o', label='daily value')
+    # ax.plot([1, plotdays], [.45, .05], 'o', label='two days average')
+    # ax.plot([1, plotdays], [.475, .025], label='five days average')
+    ax.plot([1, ndays], [8, 0], 'o', label='daily value')
+    ax.plot([1, ndays], [6, 2], 'o', label='two days average')
+    ax.plot([1, ndays], [7, 1], label='seven days average')
     ax.plot(np.NaN, '.', label=today)
     # ymax, ymin = .525, -.025
     ymax, ymin = 9, -1
@@ -189,7 +195,7 @@ def lmonthslops(pddf, countryl, ncols=3, fignum=100, dpi=100,
     ax.set_ylabel('daily plus [%]')
     ax.yaxis.set_label_position("right")
     bbstl = {'facecolor': 'white', 'alpha': .5}
-    ax.text(.375, .8, 'last month casualties', transform=ax.transAxes,
+    ax.text(.375, .8, 'last month cases', transform=ax.transAxes,
             bbox=bbstl)
     ax.set_title('Legend')
     plt.tight_layout()

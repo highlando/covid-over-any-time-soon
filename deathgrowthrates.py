@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib
-from ghc_helpers import plotlogslops, getthelogslope, lmonthslops
+from ghc_helpers import plotlogslops, lmonthslops
 from ghc_helpers import getthepercincreases
 
 font = {'family': 'normal',
@@ -18,10 +18,11 @@ pathd = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
         'time_series_covid19_deaths_global.csv'
 pathc = 'data/csse_covid_19_data/csse_covid_19_time_series/' +\
         'time_series_covid19_confirmed_global.csv'
-deaths = pd.read_csv(pathd)
+# deaths = pd.read_csv(pathd)
+deaths = pd.read_csv(pathc)
 
 somecntrl = ['Argentina', 'Australia', 'Austria',
-             'Brazil', 'China', 'Croatia',
+             'Belgium', 'Brazil', 'China',
              'Denmark', 'Egypt', 'Greece',
              'India', 'Netherlands', 'Russia',
              'Switzerland', 'United Kingdom']
@@ -96,7 +97,7 @@ icusnoi = covidsimdatanoi[' ICU'].values
 ax.plot(covisimnoi, 'o', label='Scenario without intervention')
 ax.plot(covisim, 'o', label='Scenario with max ICU < 45,000')
 # ax.set_ylim(ymin=-.05, ymax=.5)
-ax.set_ylim(ymin=-1, ymax=9)
+ax.set_ylim(ymin=-1, ymax=15)
 ax.legend(facecolor='white')
 ax.set_title('Simulated Slopes for Germany')
 ax.set_ylabel('daily plus [%]')
